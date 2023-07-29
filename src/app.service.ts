@@ -1,6 +1,6 @@
 import { ReportType, data } from './data';
 import { Injectable } from '@nestjs/common';
-import { ReportDto } from './report.dto';
+import { CreateReportDto, UpdateReportDto } from './dtos/report.dto';
 import { v4 as uuid } from 'uuid';
 
 @Injectable()
@@ -15,10 +15,9 @@ export class AppService {
     );
   }
 
-  createReport(type: ReportType, body: ReportDto) {
+  createReport(type: ReportType, body: CreateReportDto) {
     const newReport = {
-      source: body.source,
-      amount: body.amount,
+      ...body,
       created_at: new Date(),
       updated_at: new Date(),
       type: type,
@@ -28,7 +27,7 @@ export class AppService {
     return newReport;
   }
 
-  updateReport(type: ReportType, id: string, body: ReportDto) {
+  updateReport(type: ReportType, id: string, body: UpdateReportDto) {
     const idx = data.report.findIndex(
       (report) => report.type === type && report.id === id,
     );
@@ -41,8 +40,7 @@ export class AppService {
     let report = data.report[idx];
     report = {
       ...report,
-      source: body.source,
-      amount: body.amount,
+      ...body,
       updated_at: new Date(),
     };
     data.report.splice(idx, 1, report);
